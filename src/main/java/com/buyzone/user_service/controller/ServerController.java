@@ -31,5 +31,4 @@ public class ServerController {
         return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
-    @Get
 }
