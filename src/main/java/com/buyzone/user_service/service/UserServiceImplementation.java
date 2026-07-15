@@ -92,6 +92,7 @@ public class UserServiceImplementation implements UserService{
         genericResponseDto.setStatus("User Deleted");
 
         return genericResponseDto;
+
     }
 
     //Helper method
