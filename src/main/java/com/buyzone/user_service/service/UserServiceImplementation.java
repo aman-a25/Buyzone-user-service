@@ -3,6 +3,7 @@ package com.buyzone.user_service.service;
 import com.buyzone.user_service.dto.response.GenericResponseDto;
 import com.buyzone.user_service.dto.request.UserRequestDto;
 import com.buyzone.user_service.dto.response.UserResponseDto;
+import com.buyzone.user_service.exception.UserNotFoundException;
 import com.buyzone.user_service.model.User;
 import com.buyzone.user_service.reposetory.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,15 @@ import java.util.List;
 
 @Service
 public class UserServiceImplementation implements UserService{
-    @Autowired
+
     UserRepository userRepository;
+
+    @Autowired
+    UserServiceImplementation( UserRepository userRepository) {
+
+        this.userRepository = userRepository;
+
+    }
 
     @Override
     public UserResponseDto registerUser(UserRequestDto userRequestDto) {
@@ -27,7 +35,11 @@ public class UserServiceImplementation implements UserService{
 
     @Override
     public UserResponseDto getUserById(Long id) {
-        return null;
+
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User id " + id + " doesn't exist"));
+
+        return mapUserToUserResponse(user, new UserResponseDto());
+
     }
 
     @Override
