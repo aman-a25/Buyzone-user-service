@@ -7,8 +7,10 @@ import com.buyzone.user_service.exception.UserNotFoundException;
 import com.buyzone.user_service.model.User;
 import com.buyzone.user_service.reposetory.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -30,7 +32,7 @@ public class UserServiceImplementation implements UserService{
 
         userRepository.save(user);
 
-        return mapUserToUserResponse(user, new UserResponseDto());
+        return mapUserToUserResponseDto(user, new UserResponseDto());
     }
 
     @Override
@@ -38,23 +40,58 @@ public class UserServiceImplementation implements UserService{
 
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User id " + id + " doesn't exist"));
 
-        return mapUserToUserResponse(user, new UserResponseDto());
+        return mapUserToUserResponseDto(user, new UserResponseDto());
 
     }
 
     @Override
     public List<UserResponseDto> getAllUsers() {
-        return List.of();
+        List<User> users = userRepository.findAll();
+
+        List<UserResponseDto> userResponseDtos = new ArrayList<>();
+
+        for(User user : users){
+
+            userResponseDtos.add(mapUserToUserResponseDto(user, new UserResponseDto()));
+
+        }
+
+        return userResponseDtos;
+
     }
 
     @Override
-    public UserResponseDto updateUser(UserRequestDto userRequestDto) {
-        return null;
+    public UserResponseDto updateUser(UserRequestDto userRequestDto , Long id) {
+        // checking if user is present or not
+
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User id " + id + " doesn't exist"));
+
+        // feeding new values (replacing old ones)
+        mapUserRequestDtoToUser(user , userRequestDto);
+
+        user.setId(id);
+
+        User savedUser = userRepository.save(user);
+
+        return mapUserToUserResponseDto( savedUser, new UserResponseDto());
+
+
+
     }
 
     @Override
     public GenericResponseDto removeUserById(Long id) {
-        return null;
+
+        User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User id " + id + " doesn't exist"));
+
+        userRepository.delete(user);
+
+        GenericResponseDto genericResponseDto = new GenericResponseDto();
+        genericResponseDto.setMessage("User with id " + id + " has been removed");
+        genericResponseDto.setSuccess(true );
+        genericResponseDto.setStatus("User Deleted");
+
+        return genericResponseDto;
     }
 
     //Helper method
@@ -70,7 +107,7 @@ public class UserServiceImplementation implements UserService{
 
     }
 
-    private UserResponseDto mapUserToUserResponse(User user , UserResponseDto userResponseDto) {
+    private UserResponseDto mapUserToUserResponseDto(User user , UserResponseDto userResponseDto) {
         userResponseDto.setEmail(user.getEmail());
         userResponseDto.setName(user.getName());
         userResponseDto.setPhone(user.getPhone());

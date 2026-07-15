@@ -11,7 +11,7 @@ public interface UserService {
     UserResponseDto registerUser(UserRequestDto userRequestDto);
     UserResponseDto getUserById(Long id);
     List<UserResponseDto> getAllUsers();
-    UserResponseDto updateUser(UserRequestDto userRequestDto);
+    UserResponseDto updateUser(UserRequestDto userRequestDto, Long id);
     GenericResponseDto removeUserById(Long id);
 
 }
