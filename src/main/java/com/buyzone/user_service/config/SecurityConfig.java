@@ -29,7 +29,9 @@ public class SecurityConfig {
                                 .requestMatchers(HttpMethod.GET , "/").permitAll()
                                 .requestMatchers(HttpMethod.POST, "/").hasAnyRole("USER", "ADMIN" , "GUEST")
                                 .requestMatchers(HttpMethod.POST, "/api/users/adduser").permitAll()
+                                .requestMatchers(HttpMethod.DELETE).hasAnyRole("ADMIN")
                                 .anyRequest().authenticated()
+
                 );
 
         http.httpBasic(Customizer.withDefaults());

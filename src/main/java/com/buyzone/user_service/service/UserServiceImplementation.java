@@ -74,6 +74,8 @@ public class UserServiceImplementation implements UserService{
         // feeding new values (replacing old ones)
         mapUserRequestDtoToUser(user , userRequestDto);
 
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+
         user.setId(id);
 
         User savedUser = userRepository.save(user);
@@ -93,7 +95,7 @@ public class UserServiceImplementation implements UserService{
 
         GenericResponseDto genericResponseDto = new GenericResponseDto();
         genericResponseDto.setMessage("User with id " + id + " has been removed");
-        genericResponseDto.setSuccess(true );
+        genericResponseDto.setSuccess(true);
         genericResponseDto.setStatus("User Deleted");
 
         return genericResponseDto;

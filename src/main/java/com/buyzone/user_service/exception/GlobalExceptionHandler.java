@@ -1,6 +1,7 @@
 package com.buyzone.user_service.exception;
 
 import com.buyzone.user_service.dto.response.GenericResponseDto;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,6 +11,16 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+
+
+    @ExceptionHandler(DataIntegrityViolationException.class)
+    public ResponseEntity<GenericResponseDto> handleDataIntegrityViolationException(DataIntegrityViolationException e) {
+
+        GenericResponseDto response = new GenericResponseDto();
+        response.setMessage(e.getMessage());
+        response.setSuccess(Boolean.FALSE);
+        return new ResponseEntity<>(response, HttpStatusCode.valueOf(400));
+    }
 
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<GenericResponseDto> handleUserNotFoundException(UserNotFoundException e) {

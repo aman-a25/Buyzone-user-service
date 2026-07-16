@@ -58,7 +58,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     public ResponseEntity<GenericResponseDto> deleteUser(@PathVariable Long id) {
 
-        return new ResponseEntity<>( userService.removeUserById(id) ,  HttpStatusCode.valueOf(204));
+        return new ResponseEntity<>( userService.removeUserById(id) ,  HttpStatusCode.valueOf(200));
 
     }
 
