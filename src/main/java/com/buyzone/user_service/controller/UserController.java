@@ -3,7 +3,6 @@ package com.buyzone.user_service.controller;
 import com.buyzone.user_service.dto.request.UserRequestDto;
 import com.buyzone.user_service.dto.response.GenericResponseDto;
 import com.buyzone.user_service.dto.response.UserResponseDto;
-import com.buyzone.user_service.model.User;
 import com.buyzone.user_service.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;

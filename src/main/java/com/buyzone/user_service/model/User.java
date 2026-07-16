@@ -4,6 +4,7 @@ import com.buyzone.user_service.enums.Gender;
 import com.buyzone.user_service.enums.UserRole;
 import jakarta.persistence.*;
 import lombok.Data;
+import org.jspecify.annotations.NonNull;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -44,7 +45,8 @@ public class User implements UserDetails {
 
 
     @Override
-    public Collection<? extends GrantedAuthority> getAuthorities() {
+    @NonNull
+    public Collection<? extends GrantedAuthority>  getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         for(UserRole role : roles) {
             authorities.add(new SimpleGrantedAuthority("ROLE_" + role.name()));
@@ -54,6 +56,7 @@ public class User implements UserDetails {
 
 
     @Override
+    @NonNull
     public String getUsername() {
         return email;
     }
