@@ -3,11 +3,13 @@ package com.buyzone.user_service.service;
 import com.buyzone.user_service.dto.response.GenericResponseDto;
 import com.buyzone.user_service.dto.request.UserRequestDto;
 import com.buyzone.user_service.dto.response.UserResponseDto;
+import com.buyzone.user_service.enums.UserRole;
 import com.buyzone.user_service.exception.UserNotFoundException;
 import com.buyzone.user_service.model.User;
 import com.buyzone.user_service.reposetory.UserRepository;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.webmvc.autoconfigure.WebMvcProperties;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,12 +18,14 @@ import java.util.List;
 @Service
 public class UserServiceImplementation implements UserService{
 
-    UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    UserServiceImplementation( UserRepository userRepository) {
+    UserServiceImplementation( UserRepository userRepository , PasswordEncoder passwordEncoder) {
 
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
 
     }
 
@@ -30,6 +34,7 @@ public class UserServiceImplementation implements UserService{
 
         User user = mapUserRequestDtoToUser(new User(),userRequestDto );
 
+         user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
 
         return mapUserToUserResponseDto(user, new UserResponseDto());
@@ -103,17 +108,27 @@ public class UserServiceImplementation implements UserService{
         user.setEmail(userRequestDto.getEmail());
         user.setPhone(userRequestDto.getPhone());
         user.setGender(userRequestDto.getGender());
+        user.setAddress(userRequestDto.getAddress());
+        user.setRoles(userRequestDto.getRoles());
+
+        for (UserRole role : userRequestDto.getRoles()){
+
+            System.out.println(role);
+        }
+
 
         return user;
 
     }
 
     private UserResponseDto mapUserToUserResponseDto(User user , UserResponseDto userResponseDto) {
-        userResponseDto.setEmail(user.getEmail());
-        userResponseDto.setName(user.getName());
-        userResponseDto.setPhone(user.getPhone());
-        userResponseDto.setGender(user.getGender());
         userResponseDto.setId(user.getId());
+        userResponseDto.setName(user.getName());
+        userResponseDto.setEmail(user.getEmail());
+        userResponseDto.setPhone(user.getPhone());
+        userResponseDto.setAddress(user.getAddress());
+        userResponseDto.setGender(user.getGender());
+        userResponseDto.setRoles(user.getRoles());
 
         return userResponseDto;
     }

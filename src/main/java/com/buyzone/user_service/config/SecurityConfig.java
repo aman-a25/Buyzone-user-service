@@ -3,33 +3,32 @@ package com.buyzone.user_service.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.ProviderManager;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 public class SecurityConfig {
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http)  {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http){
 
         http
                 .csrf(
                         csrf -> csrf.disable()
                 );
 
-        // In the code below we are permitting test API completely to get auto authorized or to skip the part of authorization
-//        http
-//            .authorizeHttpRequests(
-//                    auth -> auth.requestMatchers("/test").permitAll()
-//                            .anyRequest().authenticated()
-//            );
-
-
-//     But the code below is also the copy of the code above only it doesn't have the part where we are using request matcher to permit to test
         http
                 .authorizeHttpRequests(
                         auth -> auth
                                 .requestMatchers(HttpMethod.GET , "/").permitAll()
+                                .requestMatchers(HttpMethod.POST, "/").hasAnyRole("USER", "ADMIN" , "GUEST")
+                                .requestMatchers(HttpMethod.POST, "/api/users/adduser").permitAll()
                                 .anyRequest().authenticated()
                 );
 
@@ -38,6 +37,21 @@ public class SecurityConfig {
 
 
         return http.build();
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(
+            UserDetailsService userDetailsService,
+            PasswordEncoder passwordEncoder){
+        DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider(userDetailsService);
+        daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
+
+        return new ProviderManager(daoAuthenticationProvider);
     }
 
 }

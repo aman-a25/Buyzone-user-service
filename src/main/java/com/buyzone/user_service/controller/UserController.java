@@ -3,6 +3,7 @@ package com.buyzone.user_service.controller;
 import com.buyzone.user_service.dto.request.UserRequestDto;
 import com.buyzone.user_service.dto.response.GenericResponseDto;
 import com.buyzone.user_service.dto.response.UserResponseDto;
+import com.buyzone.user_service.model.User;
 import com.buyzone.user_service.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RestController("/")
-@RequestMapping("/users")
+@RestController
+@RequestMapping("api/users")
 public class UserController {
 
     private final UserService userService;
@@ -25,7 +26,7 @@ public class UserController {
     }
 
 
-    @PostMapping
+    @PostMapping("/adduser")
     public ResponseEntity<UserResponseDto> addUser(@Valid @RequestBody UserRequestDto userRequestDto) {
 
         UserResponseDto userResponseDto = userService.registerUser(userRequestDto);

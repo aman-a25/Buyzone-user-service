@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
-    @ExceptionHandler(MethodArgumentNotValidException.class)
 
+    @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<GenericResponseDto> handleUserNotFoundException(UserNotFoundException e) {
 
         GenericResponseDto response = new GenericResponseDto();
@@ -20,6 +20,7 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(response, HttpStatusCode.valueOf(404));
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<GenericResponseDto> handleMethodArgumentNotValidException(MethodArgumentNotValidException e) {
 
         GenericResponseDto response = new GenericResponseDto();
