@@ -1,4 +1,4 @@
-package com.buyzone.user_service.reposetory;
+package com.buyzone.user_service.repository;
 
 import com.buyzone.user_service.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -9,7 +9,7 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
 
-    Optional<User> findByEmailOrPhone(String username);
+    Optional<User> findByEmailOrPhone(String email, String phone);
 
     boolean existsByEmail(String email);
 

@@ -1,6 +1,7 @@
 package com.buyzone.user_service.service;
 
-import com.buyzone.user_service.reposetory.UserRepository;
+import com.buyzone.user_service.exception.IdentifierNotFoundException;
+import com.buyzone.user_service.repository.UserRepository;
 import org.jspecify.annotations.NonNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,8 +19,8 @@ public class CustomUserDetailsServiceImp implements UserDetailsService {
     }
 
     @Override
-    public @NonNull UserDetails loadUserByUsername(@NonNull String username) throws UsernameNotFoundException {
-        return userRepository.findByEmailOrPhone(username).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+    public @NonNull UserDetails loadUserByUsername(@NonNull String identifier) throws IdentifierNotFoundException {
+        return userRepository.findByEmailOrPhone(identifier , identifier).orElseThrow(() -> new IdentifierNotFoundException("the given Identifier is not a valid Identifier (Phone NO. without country code / Email)"));
     }
 
 }

@@ -18,13 +18,20 @@ import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 public class GlobalExceptionHandler {
 
 
+    @ExceptionHandler(IdentifierNotFoundException.class)
+    public ResponseEntity<ErrorResponseDto> handleIdentifierNotFoundException(IdentifierNotFoundException e) {
+        ErrorResponseDto erd = new ErrorResponseDto();
+
+        erd.setStatus(404);
+        erd.setMessage(e.getMessage());
+
+        return new ResponseEntity<>(erd, HttpStatusCode.valueOf(404));
+    }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponseDto> handleDuplicateResourceException(DuplicateResourceException e) {
         ErrorResponseDto erd = new ErrorResponseDto();
 
-
-        erd.setTimestamp(LocalDateTime.now());
         erd.setStatus(409);
         erd.setMessage(e.getMessage());
 
@@ -36,7 +43,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponseDto erd = new ErrorResponseDto();
 
-        erd.setTimestamp(LocalDateTime.now());
         erd.setStatus(404);
         erd.setMessage(e.getMessage());
         return new ResponseEntity<>(erd, HttpStatusCode.valueOf(404));
@@ -58,7 +64,6 @@ public class GlobalExceptionHandler {
             // 3. Create and populate your custom DTO
             ErrorResponseDto errorDto = new ErrorResponseDto();
             errorDto.setStatus(400);
-            errorDto.setTimestamp(LocalDateTime.now());
 
             // Combine the field name and message so the frontend knows what went wrong!
             errorDto.setMessage(brokenField + " : " + defaultMessage);
@@ -78,7 +83,6 @@ public class GlobalExceptionHandler {
 
         ErrorResponseDto erd = new ErrorResponseDto();
 
-        erd.setTimestamp(LocalDateTime.now());
         erd.setStatus(400);
         erd.setMessage(e.getMessage());
         return new ResponseEntity<>(erd, HttpStatusCode.valueOf(400));

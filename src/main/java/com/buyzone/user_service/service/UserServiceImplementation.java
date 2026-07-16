@@ -7,7 +7,7 @@ import com.buyzone.user_service.enums.UserRole;
 import com.buyzone.user_service.exception.DuplicateResourceException;
 import com.buyzone.user_service.exception.UserNotFoundException;
 import com.buyzone.user_service.model.User;
-import com.buyzone.user_service.reposetory.UserRepository;
+import com.buyzone.user_service.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
