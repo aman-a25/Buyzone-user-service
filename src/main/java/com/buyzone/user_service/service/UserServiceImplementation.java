@@ -4,6 +4,7 @@ import com.buyzone.user_service.dto.response.GenericResponseDto;
 import com.buyzone.user_service.dto.request.UserRequestDto;
 import com.buyzone.user_service.dto.response.UserResponseDto;
 import com.buyzone.user_service.enums.UserRole;
+import com.buyzone.user_service.exception.DuplicateResourceException;
 import com.buyzone.user_service.exception.UserNotFoundException;
 import com.buyzone.user_service.model.User;
 import com.buyzone.user_service.reposetory.UserRepository;
@@ -33,6 +34,14 @@ public class UserServiceImplementation implements UserService{
     public UserResponseDto registerUser(UserRequestDto userRequestDto) {
 
         User user = mapUserRequestDtoToUser(new User(),userRequestDto );
+
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new DuplicateResourceException("Email already exists.");
+        }
+
+        if(userRepository.existsByPhone(user.getPhone())){
+            throw new DuplicateResourceException("Phone number already exists.");
+        }
 
          user.setPassword(passwordEncoder.encode(user.getPassword()));
         userRepository.save(user);
@@ -73,6 +82,14 @@ public class UserServiceImplementation implements UserService{
 
         // feeding new values (replacing old ones)
         mapUserRequestDtoToUser(user , userRequestDto);
+
+        if(userRepository.existsByEmail(user.getEmail())){
+            throw new DuplicateResourceException("Email already exists.(Duplicate entry found)");
+        }
+
+        if(userRepository.existsByPhone(user.getPhone())){
+            throw new DuplicateResourceException("Phone number already exists.(Duplicate entry found)");
+        }
 
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
