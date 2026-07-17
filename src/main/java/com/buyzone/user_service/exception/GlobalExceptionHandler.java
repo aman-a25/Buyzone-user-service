@@ -20,20 +20,14 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(IdentifierNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleIdentifierNotFoundException(IdentifierNotFoundException e) {
-        ErrorResponseDto erd = new ErrorResponseDto();
-
-        erd.setStatus(404);
-        erd.setMessage(e.getMessage());
+        ErrorResponseDto erd = new ErrorResponseDto(404, e.getMessage());
 
         return new ResponseEntity<>(erd, HttpStatusCode.valueOf(404));
     }
 
     @ExceptionHandler(DuplicateResourceException.class)
     public ResponseEntity<ErrorResponseDto> handleDuplicateResourceException(DuplicateResourceException e) {
-        ErrorResponseDto erd = new ErrorResponseDto();
-
-        erd.setStatus(409);
-        erd.setMessage(e.getMessage());
+        ErrorResponseDto erd = new ErrorResponseDto(409, e.getMessage());
 
         return new ResponseEntity<>(erd, HttpStatusCode.valueOf(409));
     }
@@ -41,10 +35,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UserNotFoundException.class)
     public ResponseEntity<ErrorResponseDto> handleUserNotFoundException(UserNotFoundException e) {
 
-        ErrorResponseDto erd = new ErrorResponseDto();
+        ErrorResponseDto erd = new ErrorResponseDto(404, e.getMessage());
 
-        erd.setStatus(404);
-        erd.setMessage(e.getMessage());
         return new ResponseEntity<>(erd, HttpStatusCode.valueOf(404));
     }
 
@@ -62,11 +54,7 @@ public class GlobalExceptionHandler {
             String defaultMessage = error.getDefaultMessage(); // e.g., "must be a well-formed email address"
 
             // 3. Create and populate your custom DTO
-            ErrorResponseDto errorDto = new ErrorResponseDto();
-            errorDto.setStatus(400);
-
-            // Combine the field name and message so the frontend knows what went wrong!
-            errorDto.setMessage(brokenField + " : " + defaultMessage);
+            ErrorResponseDto errorDto = new ErrorResponseDto(400,brokenField + " : " + defaultMessage);
 
             // 4. Add it to your LinkedList
             errors.add(errorDto);
@@ -81,10 +69,8 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleException(Exception e) {
 
-        ErrorResponseDto erd = new ErrorResponseDto();
+        ErrorResponseDto erd = new ErrorResponseDto(400, e.getMessage());
 
-        erd.setStatus(400);
-        erd.setMessage(e.getMessage());
         return new ResponseEntity<>(erd, HttpStatusCode.valueOf(400));
     }
 }

@@ -7,10 +7,11 @@ import java.time.LocalDateTime;
 @Data
 public class ErrorResponseDto {
 
-    public ErrorResponseDto(){
+    public ErrorResponseDto(int status, String message){
 
         this.timestamp = LocalDateTime.now();
-
+        this.status = status;
+        this.message = message;
     }
 
     private boolean success = true;
