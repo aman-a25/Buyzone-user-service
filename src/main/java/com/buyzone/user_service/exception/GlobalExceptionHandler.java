@@ -1,6 +1,7 @@
 package com.buyzone.user_service.exception;
 
 import com.buyzone.user_service.dto.response.ErrorResponseDto;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -8,11 +9,8 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.time.LocalDateTime;
 import java.util.LinkedList;
 import java.util.List;
-
-import static org.hibernate.internal.util.collections.ArrayHelper.forEach;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
@@ -68,9 +66,12 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponseDto> handleException(Exception e) {
+        ErrorResponseDto erd =
+                new ErrorResponseDto(500, "Internal Server Error");
 
-        ErrorResponseDto erd = new ErrorResponseDto(400, e.getMessage());
-
-        return new ResponseEntity<>(erd, HttpStatusCode.valueOf(400));
+        return new ResponseEntity<>(
+                erd,
+                HttpStatus.INTERNAL_SERVER_ERROR
+        );
     }
 }

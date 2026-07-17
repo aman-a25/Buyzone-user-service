@@ -5,11 +5,14 @@ import com.buyzone.user_service.dto.request.UserRequestDto;
 import com.buyzone.user_service.dto.response.UserResponseDto;
 import com.buyzone.user_service.enums.UserRole;
 import com.buyzone.user_service.exception.DuplicateResourceException;
+import com.buyzone.user_service.exception.UnauthorizedResourceAccessException;
 import com.buyzone.user_service.exception.UserNotFoundException;
 import com.buyzone.user_service.model.User;
 import com.buyzone.user_service.repository.UserRepository;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -76,18 +79,20 @@ public class UserServiceImplementation implements UserService{
 
     @Override
     public UserResponseDto updateUser(UserRequestDto userRequestDto , Long id) {
-        // checking if user is present or not
 
+        validateOwnershipOrAdmin(id);
+
+        // checking if user is present or not
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User id " + id + " doesn't exist"));
 
         // feeding new values (replacing old ones)
-        mapUserRequestDtoToUser(user , userRequestDto);
+        mapUserRequestDtoToUser(user, userRequestDto);
 
-        if(userRepository.existsByEmail(user.getEmail())){
+        if (userRepository.existsByEmailAndIdNot(user.getEmail() , id)) {
             throw new DuplicateResourceException("Email already exists.(Duplicate entry found)");
         }
 
-        if(userRepository.existsByPhone(user.getPhone())){
+        if (userRepository.existsByPhoneAndIdNot(user.getPhone(), id)) {
             throw new DuplicateResourceException("Phone number already exists.(Duplicate entry found)");
         }
 
@@ -99,12 +104,12 @@ public class UserServiceImplementation implements UserService{
 
         return mapUserToUserResponseDto( savedUser, new UserResponseDto());
 
-
-
     }
 
     @Override
     public GenericResponseDto removeUserById(Long id) {
+
+        validateOwnershipOrAdmin(id);
 
         User user = userRepository.findById(id).orElseThrow(() -> new UserNotFoundException("User id " + id + " doesn't exist"));
 
@@ -135,7 +140,6 @@ public class UserServiceImplementation implements UserService{
             System.out.println(role);
         }
 
-
         return user;
 
     }
@@ -151,4 +155,42 @@ public class UserServiceImplementation implements UserService{
 
         return userResponseDto;
     }
+
+    private User getLoggedInUser() {
+
+        Authentication authentication =
+                SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication == null || !authentication.isAuthenticated()) {
+            throw new UnauthorizedResourceAccessException(
+                    "User is not authenticated."
+            );
+        }
+
+        return (User) authentication.getPrincipal();
+    }
+
+    private Boolean checkOwnership(Long targetUserId) {
+
+        return getLoggedInUser().getId().equals(targetUserId);
+
+    }
+
+    private Boolean checkIsAdmin() {
+
+        return getLoggedInUser().getRoles().contains(UserRole.ADMIN);
+
+    }
+
+    private void validateOwnershipOrAdmin(Long targetUserId) {
+
+        if (!(checkIsAdmin() || checkOwnership(targetUserId))) {
+            throw new UnauthorizedResourceAccessException(
+                    "You are not allowed to access this resource."
+            );
+        }
+
+    }
+
+
 }
